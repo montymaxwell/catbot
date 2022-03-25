@@ -1,12 +1,10 @@
 
 /**
- * just a method that inverses Array.pop() functionality
+ * removes the first item from an array, and returns that removed item.
  */
 export function pop<T>(arr: Array<T>) {
-    arr.reverse();
-    const item = arr.pop();
-    arr.reverse();
-    return item;
+    const item = arr.splice(0, 1);
+    return item[0];
 };
 
 /**

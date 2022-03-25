@@ -72,7 +72,7 @@ export function MusicPlayer() {
         const info = getShortMetaData(await getYoutubeMetadata(url));
         streams.push({ url, info });
         
-        if(Player.state.status === AudioPlayerStatus.Idle) {
+        if(Player.state.status == AudioPlayerStatus.Idle) {
             await Load_LocalAudioStream();
             return;
         }

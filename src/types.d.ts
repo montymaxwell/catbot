@@ -7,6 +7,15 @@ export declare interface Member {
     isTurn?: boolean
 }
 
+export declare interface Card {
+    suit: string,
+    value: number,
+}
+
+export declare interface UNOCard extends Card {
+    effect?: string
+}
+
 export declare interface Player {
     isReady: boolean,
     isTurn?: boolean,
@@ -20,4 +29,11 @@ export declare interface VideoMetadata {
     timestamp: string,
     uploadDate: string,
     image: string,
+}
+
+type EventTypes = "playerSessionStatus" | "playerMoved";
+
+export interface Event {
+    emit: (event: EventTypes, ...args: any[]) => {}
+    on: (event: EventTypes, listener: (...args: any[]) => void) => {}
 }

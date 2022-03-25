@@ -19,15 +19,15 @@ export const uno_game_commands: ApplicationCommandData[] = [
             {
                 name: 'card',
                 required: true,
-                type: ApplicationCommandOptionTypes.STRING,
-                description: 'card that you are picking to drop',
+                type: ApplicationCommandOptionTypes.NUMBER,
+                description: 'index of card that you are picking to drop from deck',
             },
         ]
     }
 ]
 
 
-export async function UNO_Start(Members:  Player[]) {
+export function UNO_Start(Members:  Player[]) {
     let suits = ["red", "green", "blue", "yellow"];
     let values = [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9];
     const deck = Shuffle(generateDeck(suits, values));
@@ -47,10 +47,12 @@ export async function UNO_Start(Members:  Player[]) {
         i = 0;
         Members[j].inventory = base;
     }
+
+    return deck;
 }
 
-
-class UNO extends EventEmitter {
+// should i do object oriented approach?... idk yet.
+export class UNO extends EventEmitter {
     public SessionID: string = "";
     public channelID: string;
     private guild: Guild;
@@ -61,7 +63,7 @@ class UNO extends EventEmitter {
         this.channelID = ChannelID;
     }
 
-    async CreateSession() {
+    public async CreateSession() {
         const thread = await createMessageThread(this.guild, this.channelID, {
             name: 'UNO',
             autoArchiveDuration: 60,
