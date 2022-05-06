@@ -6,7 +6,7 @@ import { ApplicationCommandOptionTypes } from "discord.js/typings/enums";
 
 import { pop } from "../utils/Array";
 import { VideoMetadata } from "../types";
-import { FormatToYoutubeURL, getLocalAudioStream, getYoutubeMetadata } from "../components/AudioHandlers";
+import { getLocalAudioStream, getYoutubeMetadata } from "../components/AudioHandlers";
 
 export interface Video { url: string, info: VideoMetadata };
 export const streams: Video[] = [];
@@ -67,8 +67,7 @@ export function MusicPlayer() {
         }
     });
 
-    const Queue = async(input: string) => {
-        const url = await FormatToYoutubeURL(input);
+    const Queue = async(url: string) => {
         const info = getShortMetaData(await getYoutubeMetadata(url));
         streams.push({ url, info });
         

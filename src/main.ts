@@ -15,6 +15,8 @@ import { getLocalAudioStream } from './components/AudioHandlers';
 import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
 import { uno_game_commands, UNO_Start } from './systems/minigames/UNO';
 import { lastTrack, MusicPlayer, PlayerEmbed, MusicCommands, streams } from './cmd/music';
+import yts, { VideoSearchResult } from 'yt-search';
+import { MusicOptionsField } from './components/Embeds';
 
 dotenv.config({ path: join(__dirname, './.env') });
 const env = process.env;
@@ -50,6 +52,7 @@ const UNOStats: { lastCard: UNOCard | null, isRotationFlipped: boolean, deck: UN
 
 Main();
 function Main() {
+    let videos: VideoSearchResult[];
     const { Player, Queue } = MusicPlayer();
     
     const client = new Client({
@@ -89,7 +92,22 @@ function Main() {
                             const song = interaction.options.getString('song');
                             if(song) {
                                 try {
-                                    await Queue(song);
+                                    if(song.startsWith('https://www.youtube.com/watch?v=')) {
+                                        await Queue(song);
+                                    }
+                                    // to not crash my script
+                                    else if(song === "1" || song === "2" || song === "3" || song === "4" || song === "5") {
+                                        if(Number(song) > 0) {
+                                            await Queue(videos[(Number(song) - 1)].url);
+                                        }
+                                    }
+                                    else {
+                                        const result = await yts(song);
+                                        videos = result.videos.splice(0, 5);
+                                        await interaction.editReply({ embeds: [MusicOptionsField(videos)] });
+                                        return;
+                                    }
+
                                     const channel = await joinUserChannel(interaction.user.id, interaction.guild);
                                     if(channel) {
                                         channel.subscribe(Player);
@@ -118,11 +136,13 @@ function Main() {
                             }
                             else if(Player.state.status == AudioPlayerStatus.Paused) {
                                 Player.unpause();
+                                await interaction.deleteReply();
                             }
                         break;
 
                         case "pause":
                             Player.pause();
+                            await interaction.deleteReply();
                         break;
 
                         case "skip":
@@ -136,6 +156,7 @@ function Main() {
 
                         case "stop":
                             Player.stop();
+                            await interaction.deleteReply();
                         break;
 
                         case "current":
